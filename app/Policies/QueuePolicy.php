@@ -31,4 +31,9 @@ class QueuePolicy
     {
         return $user->hasPermissionTo('manage queues');
     }
+
+    public function cancel(User $user, QueueTicket $queueTicket): bool
+    {
+        return $user->hasPermissionTo('manage queues') || $user->id === $queueTicket->user_id;
+    }
 }

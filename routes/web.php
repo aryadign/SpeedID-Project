@@ -36,11 +36,20 @@ Route::prefix('queue')->name('queue.')->middleware('auth')->group(function () {
     Route::post('/', [QueueTicketController::class, 'store'])->name('book');
     Route::get('/tickets', [QueueTicketController::class, 'index'])->name('tickets');
     Route::get('/tickets/{ticket}', [QueueTicketController::class, 'show'])->name('tickets.show');
+    Route::post('/tickets/{ticket}/cancel', [QueueTicketController::class, 'cancel'])->name('tickets.cancel');
     Route::get('/display/{service}', [QueueTicketController::class, 'display'])->name('display');
 });
 
 Route::get('/queue/current/{service}', [QueueTicketController::class, 'current'])
     ->name('queue.current');
+
+// API routes for Queue booking
+Route::middleware('auth')->group(function () {
+    Route::get('/api/institutions/{institution}/services', function (\App\Models\Institution $institution) {
+        return response()->json($institution->services()->where('is_active', true)->get());
+    });
+    Route::get('/api/services/{service}/slots', [ServiceSlotController::class, 'availableSlots']);
+});
 
 // SpeedReport
 Route::prefix('reports')->name('reports.')->middleware('auth')->group(function () {
@@ -77,7 +86,7 @@ Route::middleware('auth')->prefix('poll')->name('poll.')->group(function () {
 // SpeedNews
 Route::prefix('news')->name('news.')->group(function () {
     Route::get('/', [NewsPostController::class, 'index'])->name('index');
-    Route::get('/{post}', [NewsPostController::class, 'show'])->name('show');
+    Route::get('/{post:slug}', [NewsPostController::class, 'show'])->name('show');
 });
 
 Route::get('/news/emergency/alerts', [NewsPostController::class, 'emergencyAlerts'])

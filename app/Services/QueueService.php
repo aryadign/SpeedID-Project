@@ -43,7 +43,7 @@ class QueueService
             'queue_number' => $ticket->queue_number,
             'user_id' => $user->id,
         ]);
-        $ticket->update(['qr_code' => base64_encode(QrCode::format('png')->size(200)->generate($qrData))]);
+        $ticket->update(['qr_code' => base64_encode(QrCode::format('svg')->size(200)->generate($qrData))]);
 
         activity()->performedOn($ticket)->causedBy($user)->withProperties(['queue_number' => $ticket->queue_number, 'service' => $slot->service->name])->log('membuat antrean');
         $user->notify(new QueueStatusNotification($ticket, 'Antrean berhasil dibuat. Nomor: ' . $ticket->queue_number));

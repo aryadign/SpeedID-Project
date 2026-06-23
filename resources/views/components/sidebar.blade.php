@@ -23,9 +23,6 @@
             <span x-show="open" class="ml-3">Cari</span>
         </x-nav-link>
 
-        <div class="pt-4 pb-2" x-show="open">
-            <p class="text-xs font-medium text-text-muted uppercase tracking-wider px-3">SpeedQ</p>
-        </div>
         <x-nav-link :href="route('queue.booking')" :active="request()->routeIs('queue.*')" sidebar>
             <i data-lucide="ticket" class="w-5 h-5 shrink-0"></i>
             <span x-show="open" class="ml-3">Antrean</span>

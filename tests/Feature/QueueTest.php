@@ -197,6 +197,77 @@ class QueueTest extends TestCase
         $response->assertOk();
     }
 
+    public function test_user_can_cancel_their_ticket(): void
+    {
+        $user = User::factory()->create();
+        $user->assignRole('User');
+
+        $slot = $this->createServiceSlot();
+        $ticket = QueueTicket::create([
+            'user_id' => $user->id,
+            'service_slot_id' => $slot->id,
+            'queue_number' => '001',
+            'booking_code' => 'TESTCODE',
+            'estimated_wait' => 0,
+            'status' => 'menunggu',
+        ]);
+
+        $response = $this->actingAs($user)->post(route('queue.tickets.cancel', $ticket));
+
+        $response->assertRedirect(route('queue.tickets'));
+        $response->assertSessionHas('success');
+        $this->assertEquals('batal', $ticket->fresh()->status);
+    }
+
+    public function test_admin_can_cancel_any_ticket(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Admin');
+
+        $user = User::factory()->create();
+        $user->assignRole('User');
+
+        $slot = $this->createServiceSlot();
+        $ticket = QueueTicket::create([
+            'user_id' => $user->id,
+            'service_slot_id' => $slot->id,
+            'queue_number' => '001',
+            'booking_code' => 'TESTCODE',
+            'estimated_wait' => 0,
+            'status' => 'menunggu',
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('queue.tickets.cancel', $ticket));
+
+        $response->assertRedirect(route('queue.tickets'));
+        $response->assertSessionHas('success');
+        $this->assertEquals('batal', $ticket->fresh()->status);
+    }
+
+    public function test_user_cannot_cancel_others_ticket(): void
+    {
+        $userA = User::factory()->create();
+        $userA->assignRole('User');
+
+        $userB = User::factory()->create();
+        $userB->assignRole('User');
+
+        $slot = $this->createServiceSlot();
+        $ticket = QueueTicket::create([
+            'user_id' => $userA->id,
+            'service_slot_id' => $slot->id,
+            'queue_number' => '001',
+            'booking_code' => 'TESTCODE',
+            'estimated_wait' => 0,
+            'status' => 'menunggu',
+        ]);
+
+        $response = $this->actingAs($userB)->post(route('queue.tickets.cancel', $ticket));
+
+        $response->assertForbidden();
+        $this->assertEquals('menunggu', $ticket->fresh()->status);
+    }
+
     public function test_queue_current_returns_json(): void
     {
         $slot = $this->createServiceSlot();

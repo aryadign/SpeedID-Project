@@ -27,23 +27,47 @@
         <div class="space-y-4">
             @foreach ($tickets as $ticket)
                 <a href="{{ route('queue.tickets.show', $ticket) }}"
-                    class="block bg-surface-alt rounded-lg shadow-card-sm p-5 hover:shadow-card-md transition-shadow">
-                    <div class="flex items-center justify-between">
+                    class="block bg-surface-alt rounded-xl border border-border p-5 hover:shadow-card-md transition-all duration-200">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
-                            <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="text-2xl font-bold text-primary">{{ $ticket->queue_number }}</span>
-                            </div>
-                            <div>
-                                <p class="font-semibold text-text-primary">{{ $ticket->serviceSlot->service->institution->name }}</p>
-                                <p class="text-sm text-text-secondary">{{ $ticket->serviceSlot->service->name }}</p>
-                                <p class="text-xs text-text-muted mt-1">{{ $ticket->created_at->format('d M Y, H:i') }}</p>
+                            @if($ticket->serviceSlot->service->institution->photo)
+                                <img src="{{ asset('storage/' . $ticket->serviceSlot->service->institution->photo) }}"
+                                     alt="{{ $ticket->serviceSlot->service->institution->name }}"
+                                     class="w-14 h-14 rounded-xl object-cover border border-border shadow-sm shrink-0">
+                            @else
+                                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/10 text-primary shrink-0">
+                                    <i data-lucide="building-2" class="w-6 h-6"></i>
+                                </div>
+                            @endif
+                            <div class="min-w-0">
+                                <p class="font-semibold text-text-primary text-base truncate">{{ $ticket->serviceSlot->service->institution->name }}</p>
+                                <p class="text-sm text-text-secondary truncate mt-0.5">{{ $ticket->serviceSlot->service->name }}</p>
+                                <div class="flex items-center gap-3 mt-1.5 flex-wrap">
+                                    <span class="text-xs text-text-muted flex items-center gap-1">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+                                        {{ $ticket->created_at->format('d M Y') }}
+                                    </span>
+                                    <span class="text-xs text-text-muted flex items-center gap-1">
+                                        <i data-lucide="clock" class="w-3.5 h-3.5"></i>
+                                        {{ $ticket->serviceSlot->start_time }} - {{ $ticket->serviceSlot->end_time }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <x-status-badge type="{{ $ticket->status }}">
-                                {{ ucfirst($ticket->status) }}
-                            </x-status-badge>
-                            <i data-lucide="chevron-right" class="w-5 h-5 text-text-muted"></i>
+                        <div class="flex items-center justify-between sm:justify-end gap-4 border-t border-border pt-3 sm:border-t-0 sm:pt-0">
+                            <div class="flex items-center gap-3">
+                                <div class="text-right hidden md:block">
+                                    <span class="text-[10px] uppercase tracking-wider text-text-muted block font-medium">Nomor</span>
+                                    <span class="text-lg font-bold text-primary">#{{ $ticket->queue_number }}</span>
+                                </div>
+                                <div class="bg-primary/5 text-primary text-base font-extrabold px-3 py-1 rounded-lg border border-primary/10 md:hidden">
+                                    #{{ $ticket->queue_number }}
+                                </div>
+                                <x-status-badge type="{{ $ticket->status }}">
+                                    {{ ucfirst($ticket->status) }}
+                                </x-status-badge>
+                            </div>
+                            <i data-lucide="chevron-right" class="w-5 h-5 text-text-muted hidden sm:block"></i>
                         </div>
                     </div>
                 </a>

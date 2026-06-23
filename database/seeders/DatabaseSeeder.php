@@ -75,6 +75,59 @@ class DatabaseSeeder extends Seeder
                 ['name' => 'Darurat', 'slug' => 'darurat'],
             ]);
         }
+
+        // Seed Services, Slots, and sample Queue Ticket
+        $rsud = \App\Models\Institution::where('name', 'RSUD Tarakan')->first();
+        if ($rsud && !\App\Models\Service::exists()) {
+            $servicesData = [
+                ['institution_id' => $rsud->id, 'name' => 'Poli Umum', 'description' => 'Pemeriksaan kesehatan umum', 'duration' => 15, 'daily_quota' => 30, 'is_active' => true],
+                ['institution_id' => $rsud->id, 'name' => 'Poli Gigi', 'description' => 'Pemeriksaan dan perawatan gigi', 'duration' => 20, 'daily_quota' => 20, 'is_active' => true],
+            ];
+            
+            $puskesmas = \App\Models\Institution::where('name', 'Puskesmas Kecamatan Gambir')->first();
+            if ($puskesmas) {
+                $servicesData[] = ['institution_id' => $puskesmas->id, 'name' => 'Poli KIA', 'description' => 'Kesehatan Ibu dan Anak', 'duration' => 15, 'daily_quota' => 30, 'is_active' => true];
+            }
+
+            $dukcapil = \App\Models\Institution::where('name', 'Dukcapil Jakarta Pusat')->first();
+            if ($dukcapil) {
+                $servicesData[] = ['institution_id' => $dukcapil->id, 'name' => 'Pembuatan KTP', 'description' => 'Perekaman dan pencetakan KTP-el', 'duration' => 10, 'daily_quota' => 50, 'is_active' => true];
+            }
+
+            foreach ($servicesData as $serv) {
+                $service = \App\Models\Service::create($serv);
+                
+                // Create slots for today and tomorrow
+                foreach ([now()->toDateString(), now()->addDay()->toDateString()] as $date) {
+                    \App\Models\ServiceSlot::create([
+                        'service_id' => $service->id,
+                        'date' => $date,
+                        'start_time' => '08:00',
+                        'end_time' => '10:00',
+                        'quota' => 10,
+                    ]);
+                    \App\Models\ServiceSlot::create([
+                        'service_id' => $service->id,
+                        'date' => $date,
+                        'start_time' => '10:00',
+                        'end_time' => '12:00',
+                        'quota' => 10,
+                    ]);
+                }
+            }
+        }
+
+        // Create an active queue ticket for user
+        $user = \App\Models\User::where('email', 'user@speedid.test')->first();
+        if ($user && !\App\Models\QueueTicket::where('user_id', $user->id)->exists()) {
+            $slot = \App\Models\ServiceSlot::whereHas('service', function ($q) {
+                $q->where('name', 'Poli Umum');
+            })->whereDate('date', now()->toDateString())->first();
+            
+            if ($slot) {
+                app(\App\Services\QueueService::class)->createBooking($user, $slot);
+            }
+        }
     }
 }
 

@@ -11,15 +11,67 @@
 
 <div class="grid lg:grid-cols-2 gap-6">
     <x-card>
-        <h3 class="font-semibold text-lg mb-4">Antrean Aktif</h3>
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold text-lg">Antrean Aktif</h3>
+            <a href="{{ route('queue.tickets') }}"
+               class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-primary/80 transition-colors">
+                <i data-lucide="list-ordered" class="w-3.5 h-3.5"></i>
+                Antrean Saya
+            </a>
+        </div>
         @if($active_queue)
-            <div class="bg-primary/5 rounded-lg p-6 text-center">
-                <p class="text-sm text-text-muted mb-1">Nomor Antrean</p>
-                <p class="text-4xl font-bold text-primary mb-2">#{{ $active_queue->queue_number }}</p>
-                <p class="text-sm font-medium">{{ $active_queue->serviceSlot->service->name }}</p>
-                <p class="text-xs text-text-muted">{{ $active_queue->serviceSlot->service->institution->name }}</p>
-                <div class="mt-4">
-                    <x-status-badge :type="$active_queue->status">{{ $active_queue->status }}</x-status-badge>
+            <div class="relative bg-surface rounded-xl border border-border overflow-hidden shadow-card-sm">
+                <!-- Top Section (Institution & Service Info) -->
+                <div class="p-5 flex items-center gap-4 bg-surface-alt">
+                    @if($active_queue->serviceSlot->service->institution->photo)
+                        <img src="{{ asset('storage/' . $active_queue->serviceSlot->service->institution->photo) }}"
+                             alt="{{ $active_queue->serviceSlot->service->institution->name }}"
+                             class="w-12 h-12 rounded-xl object-cover border border-border shadow-sm shrink-0">
+                    @else
+                        <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/10 text-primary shrink-0">
+                            <i data-lucide="building-2" class="w-6 h-6"></i>
+                        </div>
+                    @endif
+                    <div class="min-w-0">
+                        <h4 class="font-semibold text-text-primary text-sm truncate">{{ $active_queue->serviceSlot->service->institution->name }}</h4>
+                        <p class="text-xs text-text-secondary truncate mt-0.5">{{ $active_queue->serviceSlot->service->name }}</p>
+                        <p class="text-[10px] text-text-muted mt-1 uppercase tracking-wider font-medium">{{ $active_queue->created_at->format('d M Y') }}</p>
+                    </div>
+                </div>
+
+                <!-- Boarding Pass Ticket Cutout Line -->
+                <div class="relative flex items-center bg-surface-alt px-4 py-1">
+                    <div class="absolute -left-2 w-4 h-4 bg-surface rounded-full border border-border"></div>
+                    <div class="w-full border-t border-dashed border-border"></div>
+                    <div class="absolute -right-2 w-4 h-4 bg-surface rounded-full border border-border"></div>
+                </div>
+
+                <!-- Ticket Body -->
+                <div class="p-5 bg-surface-alt">
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <span class="text-[10px] uppercase tracking-wider text-text-muted block font-medium">Nomor Antrean</span>
+                            <span class="text-3xl font-extrabold text-primary leading-none">#{{ $active_queue->queue_number }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase tracking-wider text-text-muted block font-medium">Sesi Waktu</span>
+                            <span class="text-sm font-semibold text-text-primary block mt-1">
+                                {{ $active_queue->serviceSlot->start_time }} - {{ $active_queue->serviceSlot->end_time }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between border-t border-border pt-4">
+                        <div>
+                            <span class="text-[10px] uppercase tracking-wider text-text-muted block font-medium mb-1">Status</span>
+                            <x-status-badge :type="$active_queue->status">{{ ucfirst($active_queue->status) }}</x-status-badge>
+                        </div>
+                        <a href="{{ route('queue.tickets.show', $active_queue->id) }}"
+                           class="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-primary rounded-lg hover:bg-primary/95 transition-all shadow-sm">
+                            Pantau Antrean
+                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         @else

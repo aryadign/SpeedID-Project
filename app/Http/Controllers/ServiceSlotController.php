@@ -43,9 +43,10 @@ class ServiceSlotController extends Controller
             ->with('success', 'Slot berhasil dihapus');
     }
 
-    public function availableSlots(Service $service, string $date)
+    public function availableSlots(\Illuminate\Http\Request $request, Service $service)
     {
-        $slots = $this->queueService->getAvailableSlots($service->id, $date);
+        $date = $request->query('date', now()->toDateString());
+        $slots = $this->queueService->getAvailableSlots($service, $date);
         return response()->json($slots);
     }
 }

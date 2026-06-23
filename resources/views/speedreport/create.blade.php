@@ -40,15 +40,17 @@
             <div x-data="{ showMap: false }">
                 <x-input-label value="Lokasi Kejadian" />
                 <div class="mt-1 flex items-center gap-3">
-                    <input type="text" name="location" id="location" value="{{ old('location') }}" placeholder="Masukkan alamat atau titik lokasi" readonly class="flex-1 rounded-lg border-border bg-surface-alt text-text-primary text-sm px-4 py-2.5 focus:ring-primary focus:border-primary placeholder:text-text-muted cursor-pointer" @click="showMap = !showMap" />
-                    <button type="button" @click="showMap = !showMap" class="inline-flex items-center gap-2 px-4 py-2.5 bg-surface border border-border text-text-primary text-sm font-medium rounded-lg hover:bg-surface-alt transition-colors">
+                    <input type="text" name="location" id="location" value="{{ old('location') }}" placeholder="Masukkan alamat atau titik lokasi" readonly class="flex-1 rounded-lg border-border bg-surface-alt text-text-primary text-sm px-4 py-2.5 focus:ring-primary focus:border-primary placeholder:text-text-muted cursor-pointer" @click="showMap = !showMap; if(showMap) { $nextTick(() => initPickerMap()) }" />
+                    <button type="button" @click="showMap = !showMap; if(showMap) { $nextTick(() => initPickerMap()) }" class="inline-flex items-center gap-2 px-4 py-2.5 bg-surface border border-border text-text-primary text-sm font-medium rounded-lg hover:bg-surface-alt transition-colors">
                         <i data-lucide="map-pin" class="w-4 h-4"></i>
                         Pilih
                     </button>
                 </div>
                 <div x-show="showMap" x-cloak class="mt-3 rounded-lg overflow-hidden border border-border">
-                    <div id="map-picker" class="h-64 bg-surface flex items-center justify-center">
-                        <p class="text-sm text-text-muted">Peta interaktif akan muncul di sini</p>
+                    <div id="map-picker" class="h-64 bg-surface flex items-center justify-center relative">
+                        <div class="absolute inset-0 bg-surface flex items-center justify-center z-10" id="map-loader">
+                            <span class="text-sm text-text-muted">Memuat peta...</span>
+                        </div>
                     </div>
                 </div>
                 <input type="hidden" name="latitude" id="latitude" value="{{ old('latitude') }}" />
@@ -73,4 +75,106 @@
         </form>
     </x-card>
 </div>
+
+@push('scripts')
+<script>
+    let pickerMap = null;
+    let pickerMarker = null;
+
+    function initPickerMap() {
+        const mapContainer = document.getElementById('map-picker');
+        if (!mapContainer) return;
+
+        if (pickerMap) {
+            setTimeout(() => {
+                pickerMap.invalidateSize();
+            }, 50);
+            return;
+        }
+
+        // Get coordinates or default to Jakarta
+        const inputLat = document.getElementById('latitude');
+        const inputLng = document.getElementById('longitude');
+        const inputLoc = document.getElementById('location');
+        const loader = document.getElementById('map-loader');
+
+        const defaultLat = parseFloat(inputLat.value) || -6.200000;
+        const defaultLng = parseFloat(inputLng.value) || 106.816666;
+
+        pickerMap = L.map(mapContainer).setView([defaultLat, defaultLng], 13);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a>',
+            maxZoom: 19
+        }).addTo(pickerMap);
+
+        if (inputLat.value && inputLng.value) {
+            pickerMarker = L.marker([defaultLat, defaultLng]).addTo(pickerMap);
+        }
+
+        // Try getting user current position
+        if (navigator.geolocation && !inputLat.value) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const curLat = position.coords.latitude;
+                const curLng = position.coords.longitude;
+
+                pickerMap.setView([curLat, curLng], 15);
+                if (pickerMarker) {
+                    pickerMarker.setLatLng([curLat, curLng]);
+                } else {
+                    pickerMarker = L.marker([curLat, curLng]).addTo(pickerMap);
+                }
+
+                inputLat.value = curLat;
+                inputLng.value = curLng;
+                inputLoc.value = `${curLat.toFixed(6)}, ${curLng.toFixed(6)}`;
+
+                // Reverse geocode
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${curLat}&lon=${curLng}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.display_name) {
+                            inputLoc.value = data.display_name;
+                        }
+                    })
+                    .catch(() => {});
+            }, function() {}, { enableHighAccuracy: true });
+        }
+
+        pickerMap.on('click', function(e) {
+            const lat = e.latlng.lat;
+            const lng = e.latlng.lng;
+
+            if (pickerMarker) {
+                pickerMarker.setLatLng(e.latlng);
+            } else {
+                pickerMarker = L.marker(e.latlng).addTo(pickerMap);
+            }
+
+            inputLat.value = lat;
+            inputLng.value = lng;
+            inputLoc.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+
+            // Reverse geocode Nominatim
+            fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        inputLoc.value = data.display_name;
+                    }
+                })
+                .catch(() => {});
+        });
+
+        // Hide loader when tiles are loaded
+        pickerMap.whenReady(() => {
+            if (loader) loader.remove();
+        });
+
+        setTimeout(() => {
+            pickerMap.invalidateSize();
+        }, 100);
+    }
+</script>
+@endpush
 </x-app-layout>

@@ -43,7 +43,7 @@ class NewsTest extends TestCase
             'published_at' => now(),
         ]);
 
-        $this->get("/news/{$post->id}")
+        $this->get(route('news.show', $post))
             ->assertOk();
     }
 
@@ -58,7 +58,7 @@ class NewsTest extends TestCase
             'status' => 'draft',
         ]);
 
-        $this->get("/news/{$post->id}")
+        $this->get(route('news.show', $post))
             ->assertNotFound();
     }
 

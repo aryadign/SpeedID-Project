@@ -3,12 +3,15 @@
 
 <div class="max-w-3xl mx-auto">
     <form method="GET" action="{{ route('search') }}" class="mb-8">
-        <div class="relative">
+        <div class="relative flex items-center">
             <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted"></i>
             <input type="text" name="q" value="{{ $query }}"
                    placeholder="Cari instansi, berita, laporan..."
-                   class="w-full pl-12 pr-4 py-3.5 bg-surface-alt border border-border rounded-lg text-sm focus:ring-primary focus:border-primary"
+                   class="w-full pl-12 pr-24 py-3.5 bg-surface-alt border border-border rounded-lg text-sm focus:ring-primary focus:border-primary focus:ring-1"
                    autofocus>
+            <button type="submit" class="absolute right-2 px-4 py-2 bg-primary text-white text-xs font-semibold rounded-md hover:bg-primary/95 transition-all shadow-sm">
+                Cari
+            </button>
         </div>
     </form>
 

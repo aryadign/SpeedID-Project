@@ -13,20 +13,29 @@ class QueueTicketController extends Controller
     public function __construct(
         protected QueueService $queueService
     ) {
-        $this->authorizeResource(QueueTicket::class, 'ticket');
+        // Exclude 'cancel' so it doesn't get checked against the 'update' policy (admin-only).
+        // Access control for cancel() is enforced manually inside the method.
+        $this->authorizeResource(QueueTicket::class, 'ticket', [
+            'except' => ['cancel'],
+        ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $tickets = QueueTicket::with(['serviceSlot.service.institution', 'user'])
-            ->latest()
-            ->paginate(15);
+        $query = QueueTicket::with(['serviceSlot.service.institution', 'user']);
+
+        if (!$request->routeIs('admin.*')) {
+            $query->where('user_id', $request->user()->id);
+        }
+
+        $tickets = $query->latest()->paginate(15);
         return view('speedq.tickets.index', compact('tickets'));
     }
 
     public function create()
     {
-        return view('speedq.tickets.create');
+        $institutions = \App\Models\Institution::where('is_active', true)->get();
+        return view('speedq.tickets.create', compact('institutions'));
     }
 
     public function store(Request $request)
@@ -55,6 +64,20 @@ class QueueTicketController extends Controller
     {
         $ticket->load(['serviceSlot.service.institution', 'user']);
         return view('speedq.tickets.show', compact('ticket'));
+    }
+
+    public function cancel(Request $request, QueueTicket $ticket)
+    {
+        $this->authorize('cancel', $ticket);
+
+        if (!in_array($ticket->status, ['menunggu', 'dipanggil'])) {
+            return back()->withErrors(['ticket' => 'Antrean ini tidak dapat dibatalkan.']);
+        }
+
+        $this->queueService->cancel($ticket);
+
+        return redirect()->route('queue.tickets')
+            ->with('success', 'Antrean #' . $ticket->queue_number . ' telah dibatalkan.');
     }
 
     public function current(Service $service)
