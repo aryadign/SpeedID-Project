@@ -31,50 +31,52 @@
                     <h2 class="text-base font-semibold text-text-primary">Pilih Instansi</h2>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    @foreach ($institutions as $institution)
-                        <label
-                            class="relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200"
-                            :class="selectedInstitution == {{ $institution->id }}
-                                ? 'border-primary bg-primary/5 shadow-card-sm'
-                                : 'border-border bg-surface-alt hover:border-primary/40 hover:bg-primary/[0.02]'"
-                        >
-                            <input type="radio" name="institution_id" value="{{ $institution->id }}"
-                                   class="sr-only"
-                                   x-model="selectedInstitution"
-                                   @change="onInstitutionChange({{ $institution->id }})"
-                                   {{ old('institution_id') == $institution->id ? 'checked' : '' }}>
+                <div class="max-h-[390px] sm:max-h-[200px] overflow-y-auto pr-1.5 py-1 -my-1 -mr-1.5 custom-scrollbar">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        @foreach ($institutions as $institution)
+                            <label
+                                class="relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                                :class="selectedInstitution == {{ $institution->id }}
+                                    ? 'border-primary bg-primary/5 shadow-card-sm'
+                                    : 'border-border bg-surface-alt hover:border-primary/40 hover:bg-primary/[0.02]'"
+                            >
+                                <input type="radio" name="institution_id" value="{{ $institution->id }}"
+                                       class="sr-only"
+                                       x-model="selectedInstitution"
+                                       @change="onInstitutionChange({{ $institution->id }})"
+                                       {{ old('institution_id') == $institution->id ? 'checked' : '' }}>
 
-                            {{-- Institution Photo --}}
-                            @if($institution->photo)
-                                <img src="{{ asset('storage/' . $institution->photo) }}"
-                                     alt="{{ $institution->name }}"
-                                     class="w-12 h-12 rounded-xl object-cover border border-border shrink-0">
-                            @else
-                                <div class="w-12 h-12 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center shrink-0">
-                                    <i data-lucide="building-2" class="w-6 h-6 text-primary"></i>
+                                {{-- Institution Photo --}}
+                                @if($institution->photo)
+                                    <img src="{{ asset('storage/' . $institution->photo) }}"
+                                         alt="{{ $institution->name }}"
+                                         class="w-12 h-12 rounded-xl object-cover border border-border shrink-0">
+                                @else
+                                    <div class="w-12 h-12 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center shrink-0">
+                                        <i data-lucide="building-2" class="w-6 h-6 text-primary"></i>
+                                    </div>
+                                @endif
+
+                                <div class="min-w-0 flex-1">
+                                    <p class="font-semibold text-sm text-text-primary truncate">{{ $institution->name }}</p>
+                                    <p class="text-xs text-text-muted truncate mt-0.5">{{ $institution->description }}</p>
+                                    <p class="text-[10px] text-text-muted mt-1 flex items-center gap-1">
+                                        <i data-lucide="map-pin" class="w-3 h-3"></i>
+                                        {{ $institution->address }}
+                                    </p>
                                 </div>
-                            @endif
 
-                            <div class="min-w-0 flex-1">
-                                <p class="font-semibold text-sm text-text-primary truncate">{{ $institution->name }}</p>
-                                <p class="text-xs text-text-muted truncate mt-0.5">{{ $institution->description }}</p>
-                                <p class="text-[10px] text-text-muted mt-1 flex items-center gap-1">
-                                    <i data-lucide="map-pin" class="w-3 h-3"></i>
-                                    {{ $institution->address }}
-                                </p>
-                            </div>
-
-                            {{-- Selected checkmark --}}
-                            <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
-                                 :class="selectedInstitution == {{ $institution->id }}
-                                    ? 'border-primary bg-primary'
-                                    : 'border-border bg-transparent'">
-                                <i data-lucide="check" class="w-3 h-3 text-white"
-                                   x-show="selectedInstitution == {{ $institution->id }}"></i>
-                            </div>
-                        </label>
-                    @endforeach
+                                {{-- Selected checkmark --}}
+                                <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
+                                     :class="selectedInstitution == {{ $institution->id }}
+                                        ? 'border-primary bg-primary'
+                                        : 'border-border bg-transparent'">
+                                    <i data-lucide="check" class="w-3 h-3 text-white"
+                                       x-show="selectedInstitution == {{ $institution->id }}"></i>
+                                </div>
+                            </label>
+                        @endforeach
+                    </div>
                 </div>
                 <x-input-error :messages="$errors->get('institution_id')" class="mt-2" />
             </div>
@@ -138,17 +140,19 @@
                                            class="sr-only" x-model="selectedSlot">
 
                                     <div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                        <i data-lucide="clock" class="w-5 h-5 text-primary"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-primary">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
                                         <p class="text-sm font-semibold text-text-primary" x-text="slot.start_time + ' — ' + slot.end_time"></p>
-                                        <p class="text-xs text-text-muted mt-0.5">
-                                            <span class="text-green-600 font-medium" x-text="slot.available + ' kursi tersedia'"></span>
-                                        </p>
                                     </div>
                                     <div class="absolute top-3 right-3 w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all"
                                          :class="selectedSlot == slot.id ? 'border-primary bg-primary' : 'border-border'">
-                                        <i data-lucide="check" class="w-3 h-3 text-white" x-show="selectedSlot == slot.id"></i>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="w-3 h-3 text-white" x-show="selectedSlot == slot.id">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
                                     </div>
                                 </label>
                             </template>

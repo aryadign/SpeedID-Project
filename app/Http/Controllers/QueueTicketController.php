@@ -46,7 +46,7 @@ class QueueTicketController extends Controller
 
         $slot = ServiceSlot::findOrFail($validated['service_slot_id']);
 
-        $bookedCount = $slot->queueTickets()->whereDate('created_at', today())->count();
+        $bookedCount = $slot->queueTickets()->where('status', '!=', 'batal')->count();
         if ($bookedCount >= $slot->quota) {
             return back()->withErrors(['service_slot_id' => 'Kuota slot ini sudah penuh.']);
         }

@@ -18,7 +18,12 @@ class QueueService
             ->whereDate('date', $date)
             ->where('quota', '>', 0)
             ->get()
-            ->filter(fn ($slot) => $slot->queueTickets()->whereDate('created_at', $date)->count() < $slot->quota)
+            ->map(function ($slot) {
+                $bookedCount = $slot->queueTickets()->where('status', '!=', 'batal')->count();
+                $slot->setAttribute('available', max(0, $slot->quota - $bookedCount));
+                return $slot;
+            })
+            ->filter(fn ($slot) => $slot->available > 0)
             ->values();
     }
 
