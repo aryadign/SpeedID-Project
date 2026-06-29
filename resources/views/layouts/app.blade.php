@@ -14,13 +14,46 @@
         <x-sidebar />
         <div class="flex-1 flex flex-col lg:ml-[280px]">
             <header x-data="notificationPolling('{{ route('poll.notifications') }}')" x-init="init()" class="h-16 bg-surface-alt border-b border-border flex items-center justify-between px-6 sticky top-0 z-30">
-                <div class="flex items-center gap-3">
+                <div class="flex items-center gap-3 shrink-0">
                     <button x-data @click="$dispatch('toggle-sidebar')" class="lg:hidden p-2 hover:bg-surface rounded-md">
                         <i data-lucide="menu" class="w-5 h-5"></i>
                     </button>
                     <h1 class="text-lg font-semibold">{{ $header ?? '' }}</h1>
                 </div>
-                <div class="flex items-center gap-4">
+
+                <div class="hidden sm:block flex-1 max-w-md mx-auto px-4">
+                    <div x-data="liveSearch()" class="relative" @keydown.escape.window="results = []">
+                        <form method="GET" action="{{ route('search') }}" @submit="results = []">
+                            <div class="relative">
+                                <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted pointer-events-none"></i>
+                                <input type="text" name="q" x-model="query" @input.debounce.350ms="doSearch"
+                                       placeholder="Cari instansi, berita, laporan..." autocomplete="off"
+                                       class="w-full pl-12 pr-3 py-2 bg-surface border border-border rounded-lg text-sm focus:ring-1 focus:ring-primary focus:border-primary placeholder:text-text-muted">
+                            </div>
+                        </form>
+                        <div x-show="results.length > 0" @click.outside="results = []"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             class="absolute top-full mt-2 left-0 right-0 bg-surface-alt rounded-lg shadow-card-lg border border-border overflow-hidden z-50">
+                            <template x-for="item in results" :key="item.url">
+                                <a :href="item.url" @click="results = []"
+                                   class="flex items-center gap-3 px-4 py-3 hover:bg-surface transition-colors border-b border-border last:border-0">
+                                    <i :data-lucide="item.icon" class="w-4 h-4 text-primary shrink-0"></i>
+                                    <div class="min-w-0">
+                                        <p class="text-xs text-text-muted" x-text="item.type"></p>
+                                        <p class="text-sm font-medium text-text-primary truncate" x-text="item.title"></p>
+                                    </div>
+                                </a>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 shrink-0">
+                    <a href="{{ route('search') }}" class="sm:hidden p-2 hover:bg-surface rounded-md">
+                        <i data-lucide="search" class="w-5 h-5 text-text-secondary"></i>
+                    </a>
                     <div class="relative" x-data="{ open: false }">
                         <button @click="open = !open" class="relative p-2 hover:bg-surface rounded-md">
                             <i data-lucide="bell" class="w-5 h-5 text-text-secondary"></i>

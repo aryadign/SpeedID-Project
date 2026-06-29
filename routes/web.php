@@ -148,5 +148,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'admin'])->group(fun
 });
 
 Route::get('/search', [SearchController::class, 'index'])->name('search');
+Route::get('/api/search/live', [SearchController::class, 'live'])->name('search.live');
 
 require __DIR__ . '/auth.php';

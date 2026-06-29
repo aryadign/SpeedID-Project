@@ -18,10 +18,6 @@
             <i data-lucide="layout-dashboard" class="w-5 h-5 shrink-0"></i>
             <span x-show="open" class="ml-3">Dashboard</span>
         </x-nav-link>
-        <x-nav-link :href="route('search')" :active="request()->routeIs('search')" sidebar>
-            <i data-lucide="search" class="w-5 h-5 shrink-0"></i>
-            <span x-show="open" class="ml-3">Cari</span>
-        </x-nav-link>
 
         <x-nav-link :href="route('queue.booking')" :active="request()->routeIs('queue.*')" sidebar>
             <i data-lucide="ticket" class="w-5 h-5 shrink-0"></i>

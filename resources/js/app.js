@@ -73,6 +73,29 @@ Alpine.data('emergencyAlert', (url) => ({
     destroy() { if (this.intervalId) clearInterval(this.intervalId); }
 }));
 
+Alpine.data('liveSearch', () => ({
+    query: '',
+    results: [],
+
+    async doSearch() {
+        if (this.query.length < 2) {
+            this.results = [];
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/search/live?q=${encodeURIComponent(this.query)}`);
+            if (!res.ok) { this.results = []; return; }
+            this.results = await res.json();
+            this.$nextTick(() => {
+                if (typeof lucide !== 'undefined') lucide.createIcons();
+            });
+        } catch (e) {
+            this.results = [];
+        }
+    },
+}));
+
 Alpine.start();
 
 document.addEventListener('DOMContentLoaded', () => {
