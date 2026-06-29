@@ -58,6 +58,16 @@ class SOSController extends Controller
             ->whereIn('status', ['masuk', 'diproses'])
             ->latest()
             ->get();
-        return view('speedsos.admin-monitoring', compact('activeSOS'));
+
+        $sosMapData = $activeSOS->map(fn($s) => [
+            'lat' => $s->latitude,
+            'lng' => $s->longitude,
+            'type' => $s->emergency_type,
+            'url' => route('admin.sos.show', $s->id),
+            'name' => $s->user->name,
+            'time' => $s->created_at->diffForHumans(),
+        ])->values();
+
+        return view('speedsos.admin-monitoring', compact('activeSOS', 'sosMapData'));
     }
 }

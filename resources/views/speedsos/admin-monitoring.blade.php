@@ -31,11 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap', maxZoom: 18,
         }).addTo(map);
-        const sosData = @json($activeSOS->map(fn($s) => [
-            'lat' => $s->latitude, 'lng' => $s->longitude,
-            'type' => $s->emergency_type, 'url' => route('admin.sos.show', $s->id),
-            'name' => $s->user->name, 'time' => $s->created_at->diffForHumans(),
-        ]));
+        const sosData = @json($sosMapData);
         sosData.forEach(sos => {
             if (sos.lat && sos.lng) {
                 const color = sos.type === 'ambulans' ? 'red' : sos.type === 'polisi' ? 'blue' : sos.type === 'pemadam' ? 'orange' : 'gray';
