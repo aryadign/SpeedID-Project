@@ -94,48 +94,24 @@ class DatabaseSeeder extends Seeder
                 $servicesData[] = ['institution_id' => $dukcapil->id, 'name' => 'Pembuatan KTP', 'description' => 'Perekaman dan pencetakan KTP-el', 'duration' => 10, 'daily_quota' => 50, 'is_active' => true];
             }
 
+            $samsat = \App\Models\Institution::where('name', 'Samsat Jakarta Selatan')->first();
+            if ($samsat) {
+                $servicesData[] = ['institution_id' => $samsat->id, 'name' => 'Pembayaran Pajak Kendaraan', 'description' => 'Pembayaran PKB tahunan', 'duration' => 10, 'daily_quota' => 50, 'is_active' => true];
+            }
+
             foreach ($servicesData as $serv) {
-                $service = \App\Models\Service::create($serv);
-                
-                // Create slots for today and tomorrow
-                foreach ([now()->toDateString(), now()->addDay()->toDateString()] as $date) {
-                    \App\Models\ServiceSlot::create([
-                        'service_id' => $service->id,
-                        'date' => $date,
-                        'start_time' => '08:00',
-                        'end_time' => '10:00',
-                        'quota' => 10,
-                    ]);
-                    \App\Models\ServiceSlot::create([
-                        'service_id' => $service->id,
-                        'date' => $date,
-                        'start_time' => '10:00',
-                        'end_time' => '12:00',
-                        'quota' => 10,
-                    ]);
-                }
+                \App\Models\Service::create($serv);
             }
         }
 
         // Always ensure slots for today and tomorrow exist for all services
+        $queueService = app(\App\Services\QueueService::class);
         foreach (\App\Models\Service::all() as $service) {
             foreach ([now()->toDateString(), now()->addDay()->toDateString()] as $date) {
-                \App\Models\ServiceSlot::firstOrCreate([
-                    'service_id' => $service->id,
-                    'date' => $date,
-                    'start_time' => '08:00',
-                    'end_time' => '10:00',
-                ], [
-                    'quota' => 10,
-                ]);
-                \App\Models\ServiceSlot::firstOrCreate([
-                    'service_id' => $service->id,
-                    'date' => $date,
-                    'start_time' => '10:00',
-                    'end_time' => '12:00',
-                ], [
-                    'quota' => 10,
-                ]);
+                if (!$service->serviceSlots()->whereDate('date', $date)->exists()) {
+                    $slotsData = $queueService->getDefaultSlotsForService($service, $date);
+                    $service->serviceSlots()->createMany($slotsData);
+                }
             }
         }
 

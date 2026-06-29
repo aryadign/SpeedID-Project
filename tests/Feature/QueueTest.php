@@ -277,4 +277,110 @@ class QueueTest extends TestCase
         $response->assertOk();
         $response->assertJsonStructure([]);
     }
+
+    public function test_auto_generates_slots_when_none_exist_for_date(): void
+    {
+        $institution = Institution::create([
+            'name' => 'Test Institution',
+            'description' => 'Test Description',
+            'address' => 'Test Address',
+            'is_active' => true,
+        ]);
+
+        $service = Service::create([
+            'institution_id' => $institution->id,
+            'name' => 'Test Service',
+            'description' => 'Test Service Description',
+            'duration' => 15,
+            'daily_quota' => 100,
+            'is_active' => true,
+        ]);
+
+        $targetDate = '2026-12-25';
+
+        // Ensure no slots exist yet
+        $this->assertEquals(0, ServiceSlot::where('service_id', $service->id)->whereDate('date', $targetDate)->count());
+
+        $user = User::factory()->create();
+        $user->assignRole('User');
+
+        $response = $this->actingAs($user)->get("/api/services/{$service->id}/slots?date={$targetDate}");
+
+        $response->assertOk();
+        $slotCount = ServiceSlot::where('service_id', $service->id)->whereDate('date', $targetDate)->count();
+        $this->assertGreaterThanOrEqual(2, $slotCount);
+        $this->assertLessThanOrEqual(5, $slotCount);
+    }
+
+    public function test_reuses_existing_slots_on_subsequent_calls(): void
+    {
+        $institution = Institution::create([
+            'name' => 'Test Institution',
+            'description' => 'Test Description',
+            'address' => 'Test Address',
+            'is_active' => true,
+        ]);
+
+        $service = Service::create([
+            'institution_id' => $institution->id,
+            'name' => 'Test Service',
+            'description' => 'Test Service Description',
+            'duration' => 15,
+            'daily_quota' => 100,
+            'is_active' => true,
+        ]);
+
+        $targetDate = '2026-12-25';
+
+        $user = User::factory()->create();
+        $user->assignRole('User');
+
+        // First call to generate
+        $this->actingAs($user)->get("/api/services/{$service->id}/slots?date={$targetDate}");
+        $firstSlotCount = ServiceSlot::where('service_id', $service->id)->whereDate('date', $targetDate)->count();
+        $this->assertGreaterThanOrEqual(2, $firstSlotCount);
+
+        // Second call should reuse and not duplicate
+        $this->actingAs($user)->get("/api/services/{$service->id}/slots?date={$targetDate}");
+        $secondSlotCount = ServiceSlot::where('service_id', $service->id)->whereDate('date', $targetDate)->count();
+        $this->assertEquals($firstSlotCount, $secondSlotCount);
+    }
+
+    public function test_auto_generated_slots_are_varied_by_service(): void
+    {
+        $institution = Institution::create([
+            'name' => 'Test Institution',
+            'description' => 'Test Description',
+            'address' => 'Test Address',
+            'is_active' => true,
+        ]);
+
+        $queueService = app(\App\Services\QueueService::class);
+        $date = '2026-12-25';
+
+        $slotConfigurations = [];
+
+        for ($i = 0; $i < 5; $i++) {
+            $service = Service::create([
+                'institution_id' => $institution->id,
+                'name' => "Service $i",
+                'description' => 'Desc',
+                'duration' => 15,
+                'daily_quota' => 100,
+                'is_active' => true,
+            ]);
+
+            $slots = $queueService->getAvailableSlots($service, $date);
+            $this->assertGreaterThanOrEqual(2, count($slots));
+            $this->assertLessThanOrEqual(5, count($slots));
+
+            // Map slots to a string representation of start times to compare variety
+            $times = $slots->map(fn($s) => $s->start_time->format('H:i'))->toArray();
+            $slotConfigurations[] = implode(',', $times);
+        }
+
+        // Check that not all generated slot configurations are identical (at least some variety exists)
+        $uniqueConfigurations = array_unique($slotConfigurations);
+        $this->assertGreaterThan(1, count($uniqueConfigurations), "Generated slots should have variety and not all be identical");
+    }
 }

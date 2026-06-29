@@ -12,8 +12,69 @@ use Illuminate\Support\Str;
 
 class QueueService
 {
+    public function getDefaultSlotsForService(Service $service, string $date): array
+    {
+        // Pool of possible time slots
+        $pool = [
+            ['start_time' => '08:00', 'end_time' => '10:00'],
+            ['start_time' => '09:00', 'end_time' => '11:00'],
+            ['start_time' => '10:00', 'end_time' => '12:00'],
+            ['start_time' => '11:00', 'end_time' => '13:00'],
+            ['start_time' => '12:00', 'end_time' => '14:00'],
+            ['start_time' => '13:00', 'end_time' => '15:00'],
+            ['start_time' => '14:00', 'end_time' => '16:00'],
+            ['start_time' => '15:00', 'end_time' => '17:00'],
+        ];
+
+        // Seed with a hash of service_id and date for deterministic randomness
+        $seed = crc32($service->id . '_' . $date);
+        mt_srand($seed);
+
+        // Randomly decide how many slots to select (e.g., between 2 and 5)
+        $numSlots = mt_rand(2, 5);
+
+        // Shuffle index array deterministically
+        $indices = range(0, count($pool) - 1);
+        
+        // Simple deterministic shuffle using mt_rand
+        for ($i = count($indices) - 1; $i > 0; $i--) {
+            $j = mt_rand(0, $i);
+            $temp = $indices[$i];
+            $indices[$i] = $indices[$j];
+            $indices[$j] = $temp;
+        }
+
+        // Take the first $numSlots indices and sort them to keep chronological order
+        $selectedIndices = array_slice($indices, 0, $numSlots);
+        sort($selectedIndices);
+
+        $slots = [];
+        foreach ($selectedIndices as $index) {
+            $slots[] = [
+                'date' => $date,
+                'start_time' => $pool[$index]['start_time'],
+                'end_time' => $pool[$index]['end_time'],
+                'quota' => mt_rand(5, 15), // Random quota between 5 and 15
+            ];
+        }
+
+        // Reset the mt_rand seed back to a random state
+        mt_srand();
+
+        return $slots;
+    }
+
     public function getAvailableSlots(Service $service, string $date)
     {
+        $exists = $service->serviceSlots()
+            ->whereDate('date', $date)
+            ->exists();
+
+        if (!$exists) {
+            $slotsData = $this->getDefaultSlotsForService($service, $date);
+            $service->serviceSlots()->createMany($slotsData);
+        }
+
         return $service->serviceSlots()
             ->whereDate('date', $date)
             ->where('quota', '>', 0)
