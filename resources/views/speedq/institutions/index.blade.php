@@ -49,7 +49,9 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="py-3 px-4 text-text-secondary">{{ $institution->subdistrict ?? '-' }}</td>
+                                <td class="py-3 px-4 text-text-secondary">
+                                    {{ $institution->subdistrict ? $institution->subdistrict->name . ', ' . $institution->subdistrict->district->name : '-' }}
+                                </td>
                                 <td class="py-3 px-4">
                                     <x-status-badge type="{{ $institution->is_active ? 'aktif' : 'tidak_aktif' }}">
                                         {{ $institution->is_active ? 'Aktif' : 'Tidak Aktif' }}

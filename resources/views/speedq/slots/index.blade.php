@@ -51,7 +51,7 @@
                                     @endif
                                 </td>
                                 <td class="py-3 px-4 text-right">
-                                    <form method="POST" action="{{ route('admin.services.slots.destroy', $slot) }}"
+                                    <form method="POST" action="{{ route('admin.slots.destroy', $slot) }}"
                                         onsubmit="return confirm('Yakin ingin menghapus sesi ini?')">
                                         @csrf
                                         @method('DELETE')

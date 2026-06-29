@@ -31,7 +31,7 @@
                     <h2 class="text-base font-semibold text-text-primary">Pilih Instansi</h2>
                 </div>
 
-                <div class="pr-1.5 py-1 -my-1 -mr-1.5">
+                <div class="pr-1.5 py-1 -my-1 -mr-1.5 {{ count($institutions) > 4 ? 'max-h-[300px] overflow-y-auto' : '' }}">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         @foreach ($institutions as $institution)
                             <label

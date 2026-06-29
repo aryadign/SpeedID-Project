@@ -31,15 +31,15 @@
                 </div>
 
                 <div>
-                    <x-input-label for="subdistrict" value="Kecamatan" />
-                    <select id="subdistrict" name="subdistrict"
+                    <x-input-label for="subdistrict_id" value="Kecamatan" />
+                    <select id="subdistrict_id" name="subdistrict_id"
                         class="mt-1 block w-full rounded-lg border-border bg-surface-alt text-text-primary shadow-sm focus:border-primary focus:ring-primary sm:text-sm">
                         <option value="">Pilih Kecamatan</option>
                         @foreach ($subdistricts as $sub)
-                            <option value="{{ $sub }}" @selected(old('subdistrict', $institution->subdistrict) == $sub)>{{ $sub }}</option>
+                            <option value="{{ $sub->id }}" @selected(old('subdistrict_id', $institution->subdistrict_id) == $sub->id)>{{ $sub->name }}, {{ $sub->district->name }}</option>
                         @endforeach
                     </select>
-                    <x-input-error :messages="$errors->get('subdistrict')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('subdistrict_id')" class="mt-2" />
                 </div>
 
                 <div>

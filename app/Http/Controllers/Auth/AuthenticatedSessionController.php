@@ -28,6 +28,15 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        $intended = $request->session()->get('url.intended');
+        if ($intended && (
+            str_contains($intended, '/poll/') || 
+            str_contains($intended, '/api/') || 
+            str_contains($intended, '/active')
+        )) {
+            $request->session()->forget('url.intended');
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

@@ -31,7 +31,7 @@ class ServiceSlotController extends Controller
     {
         $data = $request->validated();
         ServiceSlot::create($data);
-        return redirect()->route('admin.slots.index', $data['service_id'])
+        return redirect()->route('admin.services.slots.index', $data['service_id'])
             ->with('success', 'Slot berhasil ditambahkan');
     }
 
@@ -39,7 +39,7 @@ class ServiceSlotController extends Controller
     {
         $serviceId = $slot->service_id;
         $slot->delete();
-        return redirect()->route('admin.slots.index', $serviceId)
+        return redirect()->route('admin.services.slots.index', $serviceId)
             ->with('success', 'Slot berhasil dihapus');
     }
 

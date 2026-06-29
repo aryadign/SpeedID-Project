@@ -26,7 +26,12 @@ Alpine.data('notificationPolling', (pollUrl) => ({
 
     async fetchNotifications() {
         try {
-            const res = await fetch(pollUrl);
+            const res = await fetch(pollUrl, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             if (!res.ok) return;
             const data = await res.json();
             this.unreadCount = data.count;
@@ -36,7 +41,14 @@ Alpine.data('notificationPolling', (pollUrl) => ({
 
     async markRead(id) {
         try {
-            await fetch(`/poll/notifications/${id}/read`, { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content } });
+            await fetch(`/poll/notifications/${id}/read`, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                }
+            });
             this.unreadCount = Math.max(0, this.unreadCount - 1);
             this.notifications = this.notifications.filter(n => n.id !== id);
         } catch (e) {}
@@ -44,7 +56,14 @@ Alpine.data('notificationPolling', (pollUrl) => ({
 
     async markAllRead() {
         try {
-            await fetch('/poll/notifications/read-all', { method: 'POST', headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content } });
+            await fetch('/poll/notifications/read-all', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content
+                }
+            });
             this.unreadCount = 0;
             this.notifications = [];
         } catch (e) {}
@@ -84,7 +103,12 @@ Alpine.data('liveSearch', () => ({
         }
 
         try {
-            const res = await fetch(`/api/search/live?q=${encodeURIComponent(this.query)}`);
+            const res = await fetch(`/api/search/live?q=${encodeURIComponent(this.query)}`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             if (!res.ok) { this.results = []; return; }
             this.results = await res.json();
             this.$nextTick(() => {

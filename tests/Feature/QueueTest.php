@@ -383,4 +383,56 @@ class QueueTest extends TestCase
         $uniqueConfigurations = array_unique($slotConfigurations);
         $this->assertGreaterThan(1, count($uniqueConfigurations), "Generated slots should have variety and not all be identical");
     }
+
+    public function test_admin_can_create_service_slot(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Admin');
+
+        $institution = Institution::create([
+            'name' => 'Test Institution',
+            'description' => 'Test Description',
+            'address' => 'Test Address',
+            'is_active' => true,
+        ]);
+
+        $service = Service::create([
+            'institution_id' => $institution->id,
+            'name' => 'Test Service',
+            'description' => 'Test Service Description',
+            'duration' => 15,
+            'daily_quota' => 100,
+            'is_active' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.services.slots.store', $service), [
+            'date' => now()->addDay()->toDateString(),
+            'start_time' => '08:00',
+            'end_time' => '10:00',
+            'quota' => 20,
+        ]);
+
+        $response->assertRedirect(route('admin.services.slots.index', $service->id));
+        $this->assertDatabaseHas('service_slots', [
+            'service_id' => $service->id,
+            'start_time' => '08:00',
+            'end_time' => '10:00',
+            'quota' => 20,
+        ]);
+    }
+
+    public function test_admin_can_delete_service_slot(): void
+    {
+        $admin = User::factory()->create();
+        $admin->assignRole('Admin');
+
+        $slot = $this->createServiceSlot();
+
+        $response = $this->actingAs($admin)->delete(route('admin.slots.destroy', $slot));
+
+        $response->assertRedirect(route('admin.services.slots.index', $slot->service_id));
+        $this->assertDatabaseMissing('service_slots', [
+            'id' => $slot->id,
+        ]);
+    }
 }

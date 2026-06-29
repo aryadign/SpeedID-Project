@@ -21,4 +21,15 @@ class StoreSlotRequest extends FormRequest
             'quota' => 'required|integer|min:1|max:999',
         ];
     }
+
+    protected function prepareForValidation(): void
+    {
+        if ($this->route('service')) {
+            $this->merge([
+                'service_id' => $this->route('service') instanceof \App\Models\Service
+                    ? $this->route('service')->id
+                    : $this->route('service'),
+            ]);
+        }
+    }
 }
