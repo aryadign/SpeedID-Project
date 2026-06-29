@@ -1,3 +1,4 @@
+@guest
 {{-- Search Form --}}
 <form method="GET" action="{{ route('news.index') }}" class="max-w-xl mx-auto mb-8">
     <div class="relative">
@@ -5,6 +6,7 @@
         <i data-lucide="search" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-text-muted"></i>
     </div>
 </form>
+@endguest
 
 {{-- Categories Filter --}}
 <div class="flex flex-wrap items-center justify-center gap-2 mb-10">

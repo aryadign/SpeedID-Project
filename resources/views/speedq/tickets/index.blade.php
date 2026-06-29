@@ -33,10 +33,10 @@
                             @if($ticket->serviceSlot->service->institution->photo)
                                 <img src="{{ asset('storage/' . $ticket->serviceSlot->service->institution->photo) }}"
                                      alt="{{ $ticket->serviceSlot->service->institution->name }}"
-                                     class="w-14 h-14 rounded-xl object-cover border border-border shadow-sm shrink-0">
+                                     class="w-16 h-16 rounded-xl object-cover border border-border shadow-sm shrink-0">
                             @else
-                                <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/10 text-primary shrink-0">
-                                    <i data-lucide="building-2" class="w-6 h-6"></i>
+                                <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center border border-primary/10 text-primary shrink-0">
+                                    <i data-lucide="building-2" class="w-8 h-8"></i>
                                 </div>
                             @endif
                             <div class="min-w-0">

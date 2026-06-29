@@ -31,11 +31,11 @@
                     <h2 class="text-base font-semibold text-text-primary">Pilih Instansi</h2>
                 </div>
 
-                <div class="max-h-[390px] sm:max-h-[200px] overflow-y-auto pr-1.5 py-1 -my-1 -mr-1.5 custom-scrollbar">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="pr-1.5 py-1 -my-1 -mr-1.5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         @foreach ($institutions as $institution)
                             <label
-                                class="relative flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all duration-200"
+                                class="relative flex items-center gap-5 p-5 rounded-xl border-2 cursor-pointer transition-all duration-200"
                                 :class="selectedInstitution == {{ $institution->id }}
                                     ? 'border-primary bg-primary/5 shadow-card-sm'
                                     : 'border-border bg-surface-alt hover:border-primary/40 hover:bg-primary/[0.02]'"
@@ -50,17 +50,17 @@
                                 @if($institution->photo)
                                     <img src="{{ asset('storage/' . $institution->photo) }}"
                                          alt="{{ $institution->name }}"
-                                         class="w-12 h-12 rounded-xl object-cover border border-border shrink-0">
+                                         class="w-16 h-16 rounded-xl object-cover border border-border shrink-0">
                                 @else
-                                    <div class="w-12 h-12 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center shrink-0">
-                                        <i data-lucide="building-2" class="w-6 h-6 text-primary"></i>
+                                    <div class="w-16 h-16 rounded-xl bg-primary/10 border border-primary/10 flex items-center justify-center shrink-0">
+                                        <i data-lucide="building-2" class="w-8 h-8 text-primary"></i>
                                     </div>
                                 @endif
 
                                 <div class="min-w-0 flex-1">
                                     <p class="font-semibold text-sm text-text-primary truncate">{{ $institution->name }}</p>
                                     <p class="text-xs text-text-muted truncate mt-0.5">{{ $institution->description }}</p>
-                                    <p class="text-[10px] text-text-muted mt-1 flex items-center gap-1">
+                                    <p class="text-xs text-text-muted mt-1 flex items-center gap-1">
                                         <i data-lucide="map-pin" class="w-3 h-3"></i>
                                         {{ $institution->address }}
                                     </p>
