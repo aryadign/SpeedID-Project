@@ -5,6 +5,14 @@
     <div class="absolute inset-0 bg-gradient-to-br from-primary/5 via-surface to-tertiary/5"></div>
     <div class="absolute top-20 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
     <div class="absolute bottom-0 left-0 w-72 h-72 bg-tertiary/10 rounded-full blur-3xl"></div>
+    <svg class="absolute inset-0 w-full h-full opacity-[0.015] pointer-events-none" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+        <defs>
+            <pattern id="heroGrid" width="60" height="60" patternUnits="userSpaceOnUse">
+                <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" stroke-width="0.5" class="text-primary"/>
+            </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#heroGrid)"/>
+    </svg>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div class="grid lg:grid-cols-2 gap-16 items-center">
             <div>
@@ -33,18 +41,10 @@
             </div>
             <div class="hidden lg:flex items-center justify-center">
                 <div class="relative">
-                    <div class="w-80 h-80 bg-gradient-to-br from-primary to-tertiary rounded-xl rotate-6 opacity-10"></div>
-                    <div class="absolute inset-0 flex items-center justify-center">
-                        <div class="w-72 h-72 bg-surface-alt rounded-xl shadow-card-lg flex items-center justify-center">
-                            <div class="text-center">
-                                <div class="w-20 h-20 bg-primary rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                    <i data-lucide="zap" class="w-10 h-10 text-white"></i>
-                                </div>
-                                <p class="text-4xl font-bold text-primary">Speed ID</p>
-                                <p class="text-text-muted mt-1">Civic Precision</p>
-                            </div>
-                        </div>
-                    </div>
+                    <div class="w-[90%] h-[90%] bg-gradient-to-br from-primary/20 to-tertiary/20 rounded-xl rotate-6 absolute top-4 left-4"></div>
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&q=80&auto=format&fit=crop"
+                         alt="Speed ID - Layanan Publik Digital"
+                         class="relative rounded-xl shadow-card-lg object-cover w-full max-w-md aspect-[4/3]">
                 </div>
             </div>
         </div>
@@ -70,28 +70,40 @@
             <p class="text-text-secondary mt-3 max-w-2xl mx-auto">Empat layanan utama yang terintegrasi untuk memudahkan akses layanan publik Anda.</p>
         </div>
         <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <a href="#" class="group bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1">
+            <a href="#" class="group relative bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1 overflow-hidden">
+                <svg class="absolute -bottom-4 -right-4 w-28 h-28 text-primary opacity-[0.04] pointer-events-none" viewBox="0 0 100 100" fill="currentColor">
+                    <circle cx="70" cy="30" r="40"/><circle cx="30" cy="70" r="25"/>
+                </svg>
                 <div class="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-primary group-hover:text-white transition-all">
                     <i data-lucide="ticket" class="w-7 h-7 text-primary group-hover:text-white transition-colors"></i>
                 </div>
                 <h3 class="text-lg font-semibold mb-2">SpeedQ</h3>
                 <p class="text-sm text-text-secondary leading-relaxed">Antrean online tanpa perlu datang langsung. Pilih instansi, booking slot, dapatkan QR ticket.</p>
             </a>
-            <a href="#" class="group bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1">
+            <a href="#" class="group relative bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1 overflow-hidden">
+                <svg class="absolute -bottom-4 -right-4 w-28 h-28 text-orange-500 opacity-[0.06] pointer-events-none" viewBox="0 0 100 100" fill="currentColor">
+                    <circle cx="70" cy="30" r="40"/><circle cx="30" cy="70" r="25"/>
+                </svg>
                 <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-orange-500 group-hover:text-white transition-all">
                     <i data-lucide="triangle-alert" class="w-7 h-7 text-orange-500 group-hover:text-white transition-colors"></i>
                 </div>
                 <h3 class="text-lg font-semibold mb-2">SpeedReport</h3>
                 <p class="text-sm text-text-secondary leading-relaxed">Laporkan masalah di lingkungan Anda. Lengkapi dengan foto, lokasi, dan pantau statusnya.</p>
             </a>
-            <a href="#" class="group bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1">
+            <a href="#" class="group relative bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1 overflow-hidden">
+                <svg class="absolute -bottom-4 -right-4 w-28 h-28 text-red-500 opacity-[0.06] pointer-events-none" viewBox="0 0 100 100" fill="currentColor">
+                    <circle cx="70" cy="30" r="40"/><circle cx="30" cy="70" r="25"/>
+                </svg>
                 <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-red-500 group-hover:text-white transition-all">
                     <i data-lucide="shield-alert" class="w-7 h-7 text-red-500 group-hover:text-white transition-colors"></i>
                 </div>
                 <h3 class="text-lg font-semibold mb-2">SpeedSOS</h3>
                 <p class="text-sm text-text-secondary leading-relaxed">Tombol darurat dengan lokasi realtime. Terhubung langsung dengan pihak berwenang.</p>
             </a>
-            <a href="#" class="group bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1">
+            <a href="#" class="group relative bg-surface-alt rounded-lg shadow-card-sm p-8 hover:shadow-card-md transition-all hover:-translate-y-1 overflow-hidden">
+                <svg class="absolute -bottom-4 -right-4 w-28 h-28 text-cyan-500 opacity-[0.06] pointer-events-none" viewBox="0 0 100 100" fill="currentColor">
+                    <circle cx="70" cy="30" r="40"/><circle cx="30" cy="70" r="25"/>
+                </svg>
                 <div class="w-14 h-14 bg-cyan-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-cyan-500 group-hover:text-white transition-all">
                     <i data-lucide="newspaper" class="w-7 h-7 text-cyan-500 group-hover:text-white transition-colors"></i>
                 </div>
@@ -104,7 +116,7 @@
 
 <section id="tentang" class="py-20">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="grid lg:grid-cols-2 gap-16 items-start">
             <div>
                 <span class="text-sm font-medium text-primary uppercase tracking-wider">Tentang</span>
                 <h2 class="text-3xl font-bold text-secondary mt-2 mb-6">Mengapa Speed ID?</h2>
@@ -138,26 +150,36 @@
                     </div>
                 </div>
             </div>
-            <div class="bg-surface rounded-lg p-8">
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-surface-alt rounded-lg p-6 text-center">
-                        <p class="text-3xl font-bold text-primary">4</p>
-                        <p class="text-sm text-text-muted mt-1">Layanan</p>
-                    </div>
-                    <div class="bg-surface-alt rounded-lg p-6 text-center">
-                        <p class="text-3xl font-bold text-primary">99.9%</p>
-                        <p class="text-sm text-text-muted mt-1">Uptime</p>
-                    </div>
-                    <div class="bg-surface-alt rounded-lg p-6 text-center">
-                        <p class="text-3xl font-bold text-primary">24/7</p>
-                        <p class="text-sm text-text-muted mt-1">Dukungan</p>
-                    </div>
-                    <div class="bg-surface-alt rounded-lg p-6 text-center">
-                        <p class="text-3xl font-bold text-primary">100+</p>
-                        <p class="text-sm text-text-muted mt-1">Instansi</p>
-                    </div>
+            <div>
+                <div class="relative">
+                    <div class="w-[95%] h-[95%] bg-gradient-to-br from-primary/15 to-tertiary/15 rounded-xl -rotate-3 absolute top-3 left-3"></div>
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=600&q=80&auto=format&fit=crop"
+                         alt="Pelayanan Publik Terintegrasi"
+                         class="relative rounded-xl shadow-card-md object-cover w-full aspect-[16/10]">
                 </div>
             </div>
+        </div>
+
+        <div class="mt-12 bg-surface rounded-lg p-6">
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+                <div class="bg-surface-alt rounded-lg p-5 text-center">
+                    <p class="text-3xl font-bold text-primary">4</p>
+                    <p class="text-sm text-text-muted mt-1">Layanan</p>
+                </div>
+                <div class="bg-surface-alt rounded-lg p-5 text-center">
+                    <p class="text-3xl font-bold text-primary">99.9%</p>
+                    <p class="text-sm text-text-muted mt-1">Uptime</p>
+                </div>
+                <div class="bg-surface-alt rounded-lg p-5 text-center">
+                    <p class="text-3xl font-bold text-primary">24/7</p>
+                    <p class="text-sm text-text-muted mt-1">Dukungan</p>
+                </div>
+                <div class="bg-surface-alt rounded-lg p-5 text-center">
+                    <p class="text-3xl font-bold text-primary">100+</p>
+                    <p class="text-sm text-text-muted mt-1">Instansi</p>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 </section>
