@@ -114,7 +114,7 @@
                     </x-dropdown>
                 </div>
             </header>
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-6 animate-fadeIn">
                 @if (session('success'))
                     <x-alert type="success" :message="session('success')" />
                 @endif

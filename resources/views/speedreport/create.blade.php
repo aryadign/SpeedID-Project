@@ -10,7 +10,7 @@
             <div>
                 <x-input-label for="category_id" value="Kategori Laporan" />
                 <select id="category_id" name="category_id" required class="mt-1 block w-full rounded-lg border-border bg-surface-alt text-text-primary text-sm px-4 py-2.5 focus:ring-primary focus:border-primary">
-                    <option value="">Pilih Kategori</option>
+                    <option value="" disabled selected>Pilih Kategori</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
                     @endforeach

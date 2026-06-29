@@ -29,6 +29,7 @@ class DashboardService
                 ->take(5)
                 ->get(),
             'latest_news' => NewsPost::where('status', 'published')
+                ->whereNotNull('published_at')
                 ->latest('published_at')
                 ->take(5)
                 ->get(),

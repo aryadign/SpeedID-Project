@@ -230,28 +230,22 @@
 
                 loadServices(id) {
                     fetch(`/api/institutions/${id}/services`)
-                        .then(res => res.json())
+                        .then(res => {
+                            if (!res.ok) throw new Error('Gagal memuat layanan');
+                            return res.json();
+                        })
                         .then(data => {
                             const sel = document.getElementById('service_id');
                             sel.innerHTML = '<option value="">Pilih Layanan</option>';
-                            let matchedSvc = false;
-                            const reqSvcId = {{ old('service_id', request('service_id', 'null')) }};
-                            
+                            if (!Array.isArray(data)) return;
                             data.forEach(svc => {
                                 const opt = document.createElement('option');
                                 opt.value = svc.id;
                                 opt.textContent = svc.name;
-                                if (reqSvcId && svc.id == reqSvcId) {
-                                    opt.selected = true;
-                                    matchedSvc = true;
-                                }
                                 sel.appendChild(opt);
                             });
-                            
-                            if (matchedSvc) {
-                                this.loadSlots();
-                            }
-                        });
+                        })
+                        .catch(err => console.error('loadServices error:', err));
                 },
 
                 onServiceChange() {

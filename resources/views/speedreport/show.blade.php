@@ -41,9 +41,9 @@
                 <h3 class="font-semibold text-lg mb-4">Lampiran</h3>
                 <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     @foreach($report->media as $media)
-                        <a href="{{ Storage::url($media->path) }}" target="_blank" class="block aspect-video bg-surface rounded-lg overflow-hidden group relative">
+                        <a href="{{ Storage::url($media->file_path) }}" target="_blank" class="block aspect-video bg-surface rounded-lg overflow-hidden group relative">
                             @if(str_starts_with($media->mime_type, 'image'))
-                                <img src="{{ Storage::url($media->path) }}" alt="Lampiran" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                                <img src="{{ Storage::url($media->file_path) }}" alt="Lampiran" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             @else
                                 <div class="w-full h-full flex items-center justify-center">
                                     <i data-lucide="video" class="w-8 h-8 text-text-muted"></i>

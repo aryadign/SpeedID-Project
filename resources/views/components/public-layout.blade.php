@@ -11,7 +11,7 @@
 </head>
 <body class="font-sans antialiased bg-surface text-text-primary">
     <x-public-navbar />
-    <main>
+    <main class="animate-fadeIn">
         {{ $slot }}
     </main>
     <x-footer />
